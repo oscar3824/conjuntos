@@ -8,8 +8,7 @@ import{BrowserRouter,Route,Routes} from "react-router-dom"
 
 const App= () => {
   return (
-    <div className="container">
-      <h1>Ingreso al Sistema</h1>
+        <div className="container">
       <BrowserRouter>
       <Routes>
         <Route path="/" element={<Menu/>}/>

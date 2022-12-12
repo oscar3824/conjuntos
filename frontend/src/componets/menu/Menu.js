@@ -22,6 +22,9 @@ const Menu = () => {
           <Link className="navbar-brand" to="/salir">Salir</Link>
         </li>
         <li className="nav-item">
+          <Link className="navbar-brand" to="/propietario">Propietario</Link>
+        </li>
+        <li className="nav-item">
         </li>
       </ul>
     </div>

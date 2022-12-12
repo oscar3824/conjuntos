@@ -2,7 +2,12 @@ package com.unab.adminresidencial.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +22,7 @@ import com.unab.adminresidencial.Dto.PropietarioDto;
 import com.unab.adminresidencial.Entity.Propietario;
 import com.unab.adminresidencial.Service.PropietarioService;
 import com.unab.adminresidencial.Utility.ConvertEntity;
+import com.unab.adminresidencial.Utility.Security.Hash;
 
 
 @CrossOrigin(origins="*")
@@ -32,9 +38,11 @@ public class PropietarioController {
     PropietarioDto propietarioDto= new PropietarioDto();
 
     @PostMapping("/create")
-    public Object save(@RequestBody Propietario propietario){
-        return convertEntity.convert(propietarioService.save(propietario), propietarioDto);
-    
+
+    public ResponseEntity<Object> save(@Valid @RequestBody Propietario propietario){
+        propietario.setClave(Hash.sha1(propietario.getClave()));
+        return new ResponseEntity<>(convertEntity.convert(propietarioService.save(propietario), propietarioDto),
+                   HttpStatus.CREATED);
     }
     @GetMapping("/list")
     public List<Object> findAll(){
@@ -49,10 +57,11 @@ public class PropietarioController {
     }
     
     @PutMapping("/update/{id}")
-    public Object update(@RequestBody  Propietario propietario, @PathVariable("id") String id){
+    public Object update(@Valid @RequestBody  Propietario propietario, @PathVariable("id") String id){
         propietario.setIdPropietario(id);
-        return convertEntity.convert(propietarioService.save(propietario),propietarioDto);
-    }
+        propietario.setClave(Hash.sha1(propietario.getClave()));
+        return convertEntity.convert(propietarioService.save(propietario), propietarioDto);
+    }          
     @GetMapping("/list/{valor}")
     public Propietario findByNombre(@PathVariable("valor") String valor){
         return propietarioService.findByNombre(valor);

@@ -30,7 +30,8 @@ public class PropietarioService {
     public List<Propietario> findByNombreContaining(String valor){
         return propietarioRepository.findByNombreContaining(valor);
 }
-    ///public Integer logIn(String nombre, String clave){
-    //return propietarioRepository.logIn(nombre, clave);
+    public Integer logIn(String nombre, String clave){
+    return propietarioRepository.logIn(nombre, clave);
+    }
 }
 

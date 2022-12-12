@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.unab.adminresidencial.Dto.PropietarioDto;
+import com.unab.adminresidencial.Entity.Message;
 import com.unab.adminresidencial.Entity.Propietario;
 import com.unab.adminresidencial.Service.PropietarioService;
 import com.unab.adminresidencial.Utility.ConvertEntity;
@@ -38,12 +40,15 @@ public class PropietarioController {
     PropietarioDto propietarioDto= new PropietarioDto();
 
     @PostMapping("/create")
-
-    public ResponseEntity<Object> save(@Valid @RequestBody Propietario propietario){
+    public ResponseEntity<Object> save(@Valid @RequestBody Propietario propietario, @RequestHeader String nombre,@RequestHeader String clave){
+        if (propietarioService.logIn(nombre, Hash.sha1(clave))==0){
+         return new ResponseEntity<>(new Message(401,"Acceso no autorizado"), HttpStatus.UNAUTHORIZED);
+        }
         propietario.setClave(Hash.sha1(propietario.getClave()));
         return new ResponseEntity<>(convertEntity.convert(propietarioService.save(propietario), propietarioDto),
                    HttpStatus.CREATED);
-    }
+           }
+   
     @GetMapping("/list")
     public List<Object> findAll(){
         List<Object> propietarioDtoLista =new ArrayList<>();

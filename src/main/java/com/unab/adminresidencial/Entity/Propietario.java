@@ -25,7 +25,6 @@ public class Propietario {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name="UUID",strategy = "org.hibernate.id.UUIDGenerator")
-    
     @Column(length = 50)
     private String idPropietario;
    
@@ -37,16 +36,16 @@ public class Propietario {
     @NotEmpty(message = "El campo clave es requerido")
     private String clave;
     
-    @Column(length = 30)
-    private String apellido;
+    //@Column(length = 30)
+    //private String apellido;
    
-    @Column(length = 30)
-    @NotEmpty(message = "El campo documento es requerido")
-    private String documento;
+    //@Column(length = 30)
+    //@NotEmpty(message = "El campo documento es requerido")
+    //private String documento;
     
-    @Column(length = 20)
-    private String email;
+    //@Column(length = 20)
+    //private String email;
    
-    @Column(length = 15)
-    private Long telefono;
+    //@Column(length = 15)
+    //private Long telefono;
     }

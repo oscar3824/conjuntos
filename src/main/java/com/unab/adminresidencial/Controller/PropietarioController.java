@@ -41,7 +41,7 @@ public class PropietarioController {
 
     @PostMapping("/create")
     public ResponseEntity<Object> save(@Valid @RequestBody Propietario propietario, @RequestHeader String nombre,@RequestHeader String clave){
-        if (propietarioService.logIn(nombre, Hash.sha1(clave))==0){
+        if (propietarioService.logIn(nombre, clave)==0){
          return new ResponseEntity<>(new Message(401,"Acceso no autorizado"), HttpStatus.UNAUTHORIZED);
         }
         propietario.setClave(Hash.sha1(propietario.getClave()));

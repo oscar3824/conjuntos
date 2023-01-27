@@ -26,8 +26,7 @@ import com.unab.adminresidencial.Service.PropietarioService;
 import com.unab.adminresidencial.Utility.ConvertEntity;
 import com.unab.adminresidencial.Utility.Security.Hash;
 
-
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/propietario")
 public class PropietarioController {
@@ -37,43 +36,57 @@ public class PropietarioController {
 
     @Autowired
     ConvertEntity convertEntity;
-    PropietarioDto propietarioDto= new PropietarioDto();
+    PropietarioDto propietarioDto = new PropietarioDto();
 
     @PostMapping("/create")
-    public ResponseEntity<Object> save(@Valid @RequestBody Propietario propietario, @RequestHeader String nombre,@RequestHeader String clave){
-        if (propietarioService.logIn(nombre, clave)==0){
-         return new ResponseEntity<>(new Message(401,"Acceso no autorizado"), HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<Object> save(@Valid @RequestBody Propietario propietario, @RequestHeader String nombre,
+            @RequestHeader String clave) {
+        if (propietarioService.logIn(nombre, clave) == 0) {
+            return new ResponseEntity<>(new Message(401, "Acceso no autorizado"), HttpStatus.UNAUTHORIZED);
         }
         propietario.setClave(Hash.sha1(propietario.getClave()));
         return new ResponseEntity<>(convertEntity.convert(propietarioService.save(propietario), propietarioDto),
-                   HttpStatus.CREATED);
-           }
-   
+                HttpStatus.CREATED);
+    }
+
     @GetMapping("/list")
-    public List<Object> findAll(){
-        List<Object> propietarioDtoLista =new ArrayList<>();
-        for (Propietario propietario: propietarioService.findAll())
-             propietarioDtoLista.add(convertEntity.convert(propietario, propietarioDto));
+    public List<Object> findAll() {
+        List<Object> propietarioDtoLista = new ArrayList<>();
+        for (Propietario propietario : propietarioService.findAll())
+            propietarioDtoLista.add(convertEntity.convert(propietario, propietarioDto));
         return propietarioDtoLista;
     }
+
     @DeleteMapping("/delete/{id}")
-    public String findById(@PathVariable("id") String id){
+    public String findById(@PathVariable("id") String id) {
         return propietarioService.deleteById(id);
     }
-    
+
     @PutMapping("/update/{id}")
-    public Object update(@Valid @RequestBody  Propietario propietario, @PathVariable("id") String id){
+    public ResponseEntity<Object> update(@Valid @RequestBody Propietario propietario, @PathVariable("id") String id) {
         propietario.setIdPropietario(id);
         propietario.setClave(Hash.sha1(propietario.getClave()));
-        return convertEntity.convert(propietarioService.save(propietario), propietarioDto);
-    }          
-    @GetMapping("/list/{valor}")
-    public Propietario findByNombre(@PathVariable("valor") String valor){
-        return propietarioService.findByNombre(valor);
+        return new ResponseEntity<>(convertEntity.convert(propietarioService.save(propietario), propietarioDto),
+                HttpStatus.OK);
     }
+
+    @GetMapping("/list/{valor}")
+    public ResponseEntity<Object> findByNombre(@PathVariable("valor") String valor) {
+        if (propietarioService.findByNombre(valor) == null) {
+            Message message = new Message();
+            message.setStatus(401);
+            message.setMessage("Propietario ["+valor+"] no encontrado");
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(propietarioService.findByNombre(valor), HttpStatus.OK);
+    }
+
     @GetMapping("/list/cont/{valor}")
-    public List<Propietario> findByNombreContaining(@PathVariable("valor") String valor){
-        return propietarioService.findByNombreContaining(valor);
+    public ResponseEntity<List<Propietario>> findByNombreContaining(@PathVariable("valor") String valor) {
+        if (propietarioService.findByNombre(valor) == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(propietarioService.findByNombreContaining(valor), HttpStatus.OK);
     }
 
 }

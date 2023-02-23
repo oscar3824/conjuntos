@@ -25,7 +25,7 @@ public class Propietario {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name="UUID",strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(length = 50)
+    @Column(name="idPropietario",length = 50)
     private String idPropietario;
    
     @Column(length = 30, unique = true)
@@ -35,6 +35,18 @@ public class Propietario {
     @Column(length = 50)
     @NotEmpty(message = "El campo clave es requerido")
     private String clave;
+    /* 
+    public Propietario(String idPropietario) {
+        this.idPropietario = idPropietario;
+    }
+    */
+    @Override
+    public String toString() {
+        return "Propietario [idPropietario=" + idPropietario + ", nombre=" + nombre + ", clave=" + clave + "]";
+    }
+    
+
+    
     
     //@Column(length = 30)
     //private String apellido;

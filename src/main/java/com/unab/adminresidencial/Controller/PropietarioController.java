@@ -41,7 +41,7 @@ public class PropietarioController {
     @PostMapping("/create")
     public ResponseEntity<Object> save(@Valid @RequestBody Propietario propietario, @RequestHeader String nombre,
             @RequestHeader String clave) {
-        if (propietarioService.logIn(nombre, clave) == 0) {
+        if (propietarioService.logIn(nombre,Hash.sha1(clave)) == 0) {
             return new ResponseEntity<>(new Message(401, "Acceso no autorizado"), HttpStatus.UNAUTHORIZED);
         }
         propietario.setClave(Hash.sha1(propietario.getClave()));
@@ -58,12 +58,20 @@ public class PropietarioController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public String findById(@PathVariable("id") String id) {
+    public String findById(@PathVariable("id") String id, @RequestHeader String nombre,
+    @RequestHeader String clave) {
+        if (propietarioService.logIn(nombre, clave) == 0) {
+            return "Acceso no autorizado";
+        }
         return propietarioService.deleteById(id);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Object> update(@Valid @RequestBody Propietario propietario, @PathVariable("id") String id) {
+    public ResponseEntity<Object> update(@Valid @RequestBody Propietario propietario, @PathVariable("id") String id, @RequestHeader String nombre,
+    @RequestHeader String clave) {
+        if (propietarioService.logIn(nombre, clave) == 0) {
+            return new ResponseEntity<>(new Message(401, "Acceso no autorizado"), HttpStatus.UNAUTHORIZED);
+        }
         propietario.setIdPropietario(id);
         propietario.setClave(Hash.sha1(propietario.getClave()));
         return new ResponseEntity<>(convertEntity.convert(propietarioService.save(propietario), propietarioDto),
